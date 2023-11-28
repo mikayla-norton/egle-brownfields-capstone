@@ -6,6 +6,8 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import geopandas as gpd
+import folium
+from streamlit_folium import st_folium
 
 plt.rcParams.update({'text.color': "white",
                     'axes.labelcolor': "white",
@@ -17,63 +19,81 @@ plt.rcParams.update({'text.color': "white",
 
 st.set_page_config(layout="wide")
 st.title("EGLE x MSDS Capstone - Brownfields Reporting")
+st.text("Mikayla Norton, Yuhan Zhu, Aditya Lakshmi Narayanan, Graham Diedrich")
 
-col1, col2= st.columns([1,4])
+col1, col2, col3= st.columns([1,4, 1])
 
 col1.subheader("Project Background")
 
 col1.write("The primary objective of this project is to empower users in evaluating various factors associated with the revitalization of brownfield sites for solar energy purposes. The initiative aims to offer users the ability to assign weights to different variables crucial to the redevelopment process. Through this interactive platform, users will have access to a dynamic map that visually highlights the most \"optimal\" sites based on the weighted variables. This innovative approach not only enhances user engagement but also streamlines the decision-making process, facilitating the identification of prime locations for solar energy projects on brownfield sites.")
 
-brownfields = pd.read_csv("Brownfields.csv")
+col1.subheader("Methods")
 
+col1.write("This interactive dashboard synchronizes the use of ArcGIS data with data narrative techniques to visualize brownfield sites around Michigan by county. The platform utilizes Python packages such as Streamlit, Plotly, Geopandas, Folium, and more to accomplish these goals.")
 
-mi_shp = gpd.read_file("Counties_(v17a)/Counties_(v17a).shp")
+col1.subheader("Discussion")
+
+col1.subheader("References")
+
+col1.subheader("Acknowledgements")
+
+col1.write("The team would like to thank Sarah Hutchinson and all of the sponsors at EGLE. Recognition is also given to the program administration and Dr. Paul Speaker for mentorship throughout the Data Science master's program.")
+
 
 ########## PRE PROCESSING #########
-brownfields["County"] = brownfields["County"].str.lower().str.replace(" ", "")
-brownfields = brownfields.rename(columns={'County': 'NAME'})
-mi_shp["NAME"] = mi_shp["NAME"].str.lower().str.replace(" ", "")
+brownfields = pd.read_csv("Brownfields.csv")
+brownfields.dropna(subset=['Latitude', 'Longitude'], inplace=True)
+brownfields.fillna(value="None", inplace=True)
 
-map_and_stats=mi_shp.merge(brownfields, on="NAME")
-map_and_stats["TotalBrownfieldIncentives"] = map_and_stats["TotalBrownfieldIncentives"].replace(np.nan, 0)
+brownfields["County"] = brownfields["County"].str.title().str.strip()
+brownfields["County"].replace("Genessee", "Genesee", inplace=True)
+brownfields["County"].replace("Houghton/ Keweenaw", "Houghton", inplace=True)
+brownfields["County"].replace("Safinaw", "Saginaw", inplace=True)
+brownfields["County"].replace("St.", "Saint", regex=True, inplace=True)
+
+gpd_file = gpd.read_file("Counties_(v17a)/Counties_(v17a).shp")
+
+# map_and_stats=mi_shp.merge(brownfields, on="NAME")
+# map_and_stats["TotalBrownfieldIncentives"] = map_and_stats["TotalBrownfieldIncentives"].replace(np.nan, 0)
 
 ########## PLOTTING ###############
-# st.write(map_and_stats)
+opts = brownfields.columns[5:]
+opts = opts.drop(["Latitude", "Longitude"])
+selections = col2.multiselect("Please select sub-information to display", opts, default=['AwardDateYearFunded', 'City', 'SiteAddress'])
 
-fig =px.scatter_geo(map_and_stats,
-                    lat=map_and_stats.Latitude,
-                    lon=map_and_stats.Longitude,
-                    hover_name="ProjectName", scope="usa", size="TotalBrownfieldIncentives",color="PENINSULA", width=900, height=900)
-fig.update_geos(showcoastlines=True, coastlinecolor="white", coastlinewidth=1)
+map = folium.Map(location=[44.75, -85], zoom_start=7, control_scale=True)
+for index, location_info in brownfields.iterrows():
+    html=f"""
+        <h4>Project Name: {location_info['ProjectName']}</h4> """
+    for i in selections:
+        html = html + f"""
+        <p style="font-size:75%;">{i}: {location_info[i]}</p>
+        """    
 
-lat_foc = 44.3148
-lon_foc = -85.6024
-fig.update_layout(geo=dict(projection_scale=5, center=dict(lat=lat_foc, lon=lon_foc), 
-                        bgcolor='rgba(15, 17, 22,1)'))
+    iframe = folium.IFrame(html=html, width=200, height=200)
+    popup = folium.Popup(iframe, max_width=1000)
 
-col2.plotly_chart(fig)
+    folium.Marker([location_info["Latitude"], location_info["Longitude"]], popup=popup).add_to(map)
 
-st.write(map_and_stats)
+folium.raster_layers.ImageOverlay(
+    image="mi_map.png",
+    name="Michigan County Map",
+    bounds=[[41.7, -90.5], [47.45, -82.4]],
+    opacity=1,
+    interactive=False,
+    cross_origin=False,
+    zindex=1,
+    alt="mi-map.png",
+).add_to(map)
+map.fit_bounds(map.get_bounds(), padding=(30, 30))
 
-#col2.header("Annual Per Capita Emissions")
-#y = col2.slider("Year Selection", min(df["Year"]), max(df["Year"]), step = 1, value=2021)
+folium.LayerControl().add_to(map)
 
-# df = df.rename(columns={'Alpha-3 code': 'alpha-3'})
-# regions_df = df.merge(regions, on="alpha-3")
+with col2:
+    st_data = st_folium(map, width=1250, height=1250)
 
-# regions_df = regions_df.rename(columns={'alpha-3': 'iso3'})
-# dfyear = regions_df.loc[regions_df["Year"] == y]
+n = col3.select_slider("Please select number of entries for data table", options=list(range(1, len(brownfields["County"].value_counts()))), value=10)
+col3.table(pd.DataFrame(brownfields["County"].value_counts()).rename(columns={"count": "Brownfield Quantity"}).head(n))
 
-# map_and_stats=world_map.merge(dfyear, on="iso3")
-# map_and_stats = map_and_stats.rename(columns={'region_y': 'Major Region'})
-# map_and_stats = map_and_stats.rename(columns={'name_x': 'Country'})
-
-# ########### WORLD MAP ############
-# fig = px.scatter_geo(map_and_stats, locations="iso3",
-#                     size="Per Capita",hover_name="Country",color="Major Region", width=900)
-# fig.update_geos(showcoastlines=True, coastlinecolor="white", coastlinewidth=1)
-
-# fig.update_layout(geo=dict(bgcolor='rgba(15, 17, 22,1)'))
-
-# col2.plotly_chart(fig)
-# col2.divider()
+# df2 = pd.DataFrame(map_and_stats)
+# col2.dataframe(df2.head())
