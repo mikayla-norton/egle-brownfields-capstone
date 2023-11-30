@@ -26,7 +26,7 @@ col1, col2, col3= st.columns([1,4, 1])
 
 col1.subheader("Project Background")
 
-col1.write("The primary objective of this project is to empower users in evaluating various factors associated with the revitalization of brownfield sites for solar energy purposes. The initiative aims to offer users the ability to assign weights to different variables crucial to the redevelopment process. Through this interactive platform, users will have access to a dynamic map that visually highlights the most \"optimal\" sites based on the weighted variables. This innovative approach not only enhances user engagement but also streamlines the decision-making process, facilitating the identification of prime locations for solar energy projects on brownfield sites.")
+col1.write("The primary goal of this project is to enable users to assess key factors in repurposing brownfield sites for solar energy. It provides a platform for filtering parameters, featuring a dynamic map that identifies the suitable sites from on the criteria. This method enhances user involvement and simplifies decision-making, aiding in the selection of optimal locations for solar energy projects on brownfield sites.")
 
 col1.subheader("Methods")
 
