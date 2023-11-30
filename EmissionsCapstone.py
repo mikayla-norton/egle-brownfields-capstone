@@ -133,6 +133,7 @@ else:
         else:
             df_filtered = df_filtered
     else:
+        col_pick = None
         df_filtered = df_filtered
 
 
