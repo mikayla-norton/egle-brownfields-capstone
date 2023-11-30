@@ -32,9 +32,6 @@ col1.subheader("Methods")
 
 col1.write("This interactive dashboard synchronizes the use of ArcGIS data with data narrative techniques to visualize brownfield sites around Michigan by county. The platform utilizes Python packages such as Streamlit, Plotly, Geopandas, Folium, and more to accomplish these goals.")
 
-col1.subheader("Discussion")
-
-col1.subheader("References")
 
 col1.subheader("Acknowledgements")
 
@@ -185,9 +182,10 @@ with col2:
 
 
 ########## TABLE ############
-col3.divider()
-n = col3.select_slider("Please select number of entries for data table", options=list(range(1, len(brownfields["County"].value_counts()))), value=10)
-col3.table(pd.DataFrame(brownfields["County"].value_counts()).rename(columns={"count": "Brownfield Quantity"}).head(n))
+col2.divider()
+col2.subheader("Brownfields by County")
+n = col2.select_slider("Please select number of entries for data table", options=list(range(1, len(brownfields["County"].value_counts()))), value=10)
+col2.table(pd.DataFrame(brownfields["County"].value_counts()).rename(columns={"count": "Brownfield Quantity"}).head(n).transpose())
 
 # df2 = pd.DataFrame(map_and_stats)
 # col2.dataframe(df2.head())
