@@ -180,7 +180,7 @@ folium.LayerControl().add_to(map)
 
 
 with col2:
-    st_data = st_folium(map, width=1200, height=1200)
+    st_data = st_folium(map, width=800, height=800)
 
 
 
