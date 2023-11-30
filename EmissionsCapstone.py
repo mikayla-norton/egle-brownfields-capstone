@@ -33,7 +33,7 @@ col1.subheader("Methods")
 col1.write("This interactive dashboard synchronizes the use of ArcGIS data with data narrative techniques to visualize brownfield sites around Michigan by county. The platform utilizes Python packages such as Streamlit, Plotly, Geopandas, Folium, and more to accomplish these goals.")
 
 
-col1.markdown("#### Acknowledgements")
+col1.subheader("Appreciations")
 
 col1.write("The team would like to thank Sarah Hutchinson and all of the sponsors at EGLE. Recognition is also given to the program administration and Dr. Paul Speaker for mentorship throughout the Data Science master's program.")
 
