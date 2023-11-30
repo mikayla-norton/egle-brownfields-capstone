@@ -79,9 +79,11 @@ proj = col3.selectbox("Please enter the specific project you are searching for",
 if proj != '':
     df_filtered = brownfields[brownfields["ProjectName"]==proj]
     selections = None
+    col_pick = None
 
 else:
-    
+    col_pick = None
+
     col3.subheader("Filters")
 
 
