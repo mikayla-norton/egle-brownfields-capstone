@@ -37,6 +37,7 @@ col1.subheader("Appreciations")
 
 col1.write("The team would like to thank Sarah Hutchinson and all of the sponsors at EGLE. Recognition is also given to the program administration and Dr. Paul Speaker for mentorship throughout the Data Science master's program.")
 
+col3.image("EGLE-logo.png")
 
 ########## PRE PROCESSING #########
 brownfields = pd.read_csv("Brownfields.csv")
