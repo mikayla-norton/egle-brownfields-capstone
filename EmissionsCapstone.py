@@ -163,17 +163,25 @@ for index, location_info in df_filtered.iterrows():
 
     folium.Marker([location_info["Latitude"], location_info["Longitude"]], popup=popup).add_to(map)
 
-folium.raster_layers.ImageOverlay(
-    image="mi_map.png",
-    name="Michigan County Map",
-    bounds=[[41.7, -90.5], [47.45, -82.4]],
-    opacity=1,
-    interactive=False,
-    cross_origin=False,
-    zindex=1,
-    alt="mi-map.png",
-).add_to(map)
+# folium.raster_layers.ImageOverlay(
+#     image="mi_map.png",
+#     name="Michigan County Map",
+#     bounds=[[41.7, -90.5], [47.45, -82.4]],
+#     opacity=1,
+#     interactive=False,
+#     cross_origin=False,
+#     zindex=1,
+#     alt="mi-map.png",
+# ).add_to(map)
 map.fit_bounds(map.get_bounds(), padding=(30, 30))
+
+folium.GeoJson("Counties_(v17a).geojson", name="counties", style_function=lambda feature: {
+        "fillColor": "#baffdb",
+        "color": "black",
+        "weight": 1,
+        "dashArray": "5, 5",
+    }).add_to(map)
+
 
 folium.LayerControl().add_to(map)
 
