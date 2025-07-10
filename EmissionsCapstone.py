@@ -18,7 +18,9 @@ plt.rcParams.update({'text.color': "white",
                     'figure.facecolor': '0F1116',
                     'axes.facecolor': '0F1116'})
 
-st.set_page_config(layout="wide")
+st.set_page_config(page_title='Brownfields Reporting', 
+                                    page_icon=':seedling:', 
+                                    layout='wide')
 st.title("EGLE x MSDS Capstone - Brownfields Reporting")
 st.text("Mikayla Norton, Yuhan Zhu, Aditya Lakshmi Narayanan, Graham Diedrich")
 
